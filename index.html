@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Netflix Clone · Trailers y Películas</title>
+  <title>Luar TV · Todas las secciones</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Roboto,system-ui,sans-serif; }
@@ -13,7 +13,8 @@
     .login-screen { position:fixed; inset:0; z-index:9999; background:#141414; display:flex; justify-content:center; align-items:center; transition:opacity 0.8s, visibility 0.8s; }
     .login-screen.hidden { opacity:0; visibility:hidden; pointer-events:none; }
     .login-box { background:rgba(0,0,0,0.85); padding:2.5rem 2.8rem; border-radius:8px; max-width:420px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.9); border:1px solid #2a2a2a; }
-    .login-box h1 { color:#e50914; font-size:2.2rem; margin-bottom:1.8rem; }
+    .login-box h1 { color:#e50914; font-size:2.2rem; margin-bottom:0.2rem; letter-spacing:-0.5px; }
+    .login-box .subtitle { color:#aaa; font-size:0.9rem; margin-bottom:1.8rem; letter-spacing:2px; }
     .login-box label { display:block; font-size:0.85rem; margin-top:1rem; color:#ccc; }
     .login-box input { width:100%; padding:0.9rem 1rem; margin-top:0.3rem; background:#333; border:none; border-radius:4px; color:#fff; font-size:1rem; outline:1px solid transparent; }
     .login-box input:focus { outline:1px solid #e50914; background:#3a3a3a; }
@@ -28,9 +29,11 @@
     .navbar.scrolled { background:#141414; }
     .nav-left { display:flex; align-items:center; gap:2.5rem; }
     .logo { color:#e50914; font-size:1.8rem; font-weight:700; letter-spacing:-0.5px; text-transform:uppercase; cursor:pointer; }
+    .logo small { font-size:0.7rem; font-weight:300; color:#aaa; letter-spacing:1px; margin-left:4px; }
     .nav-links { display:flex; gap:1.2rem; list-style:none; font-size:0.9rem; font-weight:500; }
-    .nav-links li { cursor:pointer; color:#e5e5e5; transition:0.2s; }
+    .nav-links li { cursor:pointer; color:#e5e5e5; transition:0.2s; padding:0.2rem 0; border-bottom:2px solid transparent; }
     .nav-links li:hover { color:#b3b3b3; }
+    .nav-links li.active { color:#fff; border-bottom-color:#e50914; }
     .nav-right { display:flex; align-items:center; gap:1.2rem; position:relative; }
     .nav-right i { font-size:1.2rem; cursor:pointer; color:#e5e5e5; transition:0.2s; }
     .nav-right i:hover { color:#b3b3b3; }
@@ -79,7 +82,9 @@
     .btn-danger:hover { background:#880e0e; }
     .btn-sm { padding:0.2rem 0.8rem; font-size:0.7rem; border:none; border-radius:4px; cursor:pointer; transition:0.2s; }
 
-    /* FILAS */
+    /* FILAS - todas las secciones */
+    .section-container { display:block; }
+    .section-container.hidden { display:none; }
     .row-section { padding:0.5rem 4% 1.5rem; }
     .row-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem; }
     .row-header h2 { font-size:1.4rem; font-weight:600; }
@@ -98,11 +103,17 @@
     .badge-user { position:absolute; bottom:8px; left:8px; background:#1a237e; padding:0.1rem 0.6rem; border-radius:12px; font-size:0.55rem; font-weight:600; text-transform:uppercase; color:#90caf9; }
     .badge-popular { position:absolute; bottom:8px; right:8px; background:#e50914; padding:0.1rem 0.6rem; border-radius:12px; font-size:0.55rem; font-weight:600; text-transform:uppercase; color:#fff; }
     .badge-movie { position:absolute; bottom:8px; right:8px; background:#f57c00; padding:0.1rem 0.6rem; border-radius:12px; font-size:0.55rem; font-weight:600; text-transform:uppercase; color:#fff; }
+    .badge-mylist { position:absolute; bottom:8px; left:8px; background:#4a148c; padding:0.1rem 0.6rem; border-radius:12px; font-size:0.55rem; font-weight:600; text-transform:uppercase; color:#ce93d8; }
+    .badge-new { position:absolute; bottom:8px; right:8px; background:#00c853; padding:0.1rem 0.6rem; border-radius:12px; font-size:0.55rem; font-weight:600; text-transform:uppercase; color:#fff; }
     .delete-btn { position:absolute; top:8px; left:8px; background:rgba(0,0,0,0.7); color:#ff1744; border:none; border-radius:50%; width:24px; height:24px; font-size:0.8rem; cursor:pointer; display:none; align-items:center; justify-content:center; }
     .movie-item:hover .delete-btn { display:flex; }
     .delete-btn:hover { background:#b71c1c; color:#fff; }
     .play-btn-overlay { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.6); border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; opacity:0; transition:0.3s; color:#fff; font-size:1.2rem; border:2px solid rgba(255,255,255,0.5); }
     .movie-item:hover .play-btn-overlay { opacity:1; }
+    .add-to-list-btn { position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.7); color:#fff; border:none; border-radius:50%; width:24px; height:24px; font-size:0.7rem; cursor:pointer; display:none; align-items:center; justify-content:center; transition:0.2s; }
+    .movie-item:hover .add-to-list-btn { display:flex; }
+    .add-to-list-btn:hover { background:#e50914; }
+    .add-to-list-btn.in-list { background:#e50914; }
 
     /* MODAL PRINCIPAL */
     .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(6px); z-index:2000; display:none; justify-content:center; align-items:center; padding:1rem; }
@@ -124,12 +135,12 @@
     .modal-actions { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1.5rem; }
     .modal-actions .btn { padding:0.6rem 2rem; }
 
-    /* REPRODUCTOR DE TRAILER */
+    /* REPRODUCTOR TRAILER */
     .trailer-container { margin-top:1rem; border-radius:8px; overflow:hidden; background:#000; position:relative; }
     .trailer-container iframe { width:100%; height:315px; border:none; display:block; }
     .trailer-container .no-trailer { padding:2rem; text-align:center; color:#666; font-size:1rem; background:#1a1a1a; }
 
-    /* GESTIÓN DE SERIES EN MODAL */
+    /* GESTIÓN SERIES */
     .season-section { margin-top:1.5rem; border-top:1px solid #333; padding-top:1.5rem; }
     .season-section h3 { font-size:1.2rem; margin-bottom:0.8rem; color:#e5e5e5; }
     .season-item { background:#242424; border-radius:6px; padding:0.8rem 1rem; margin-bottom:0.6rem; }
@@ -168,7 +179,8 @@
     .footer-copy { margin-top:1.5rem; }
 
     @media (max-width:768px) {
-      .nav-links { display:none; }
+      .nav-links { display:flex; gap:0.6rem; font-size:0.7rem; }
+      .nav-links li { padding:0.1rem 0; }
       .hero { height:65vh; min-height:350px; }
       .hero-content h1 { font-size:2.5rem; }
       .movie-item { width:140px; }
@@ -183,6 +195,7 @@
     @media (max-width:480px) {
       .hero-content h1 { font-size:1.8rem; }
       .btn { padding:0.5rem 1.2rem; font-size:0.9rem; }
+      .nav-links { font-size:0.6rem; gap:0.4rem; }
     }
   </style>
 </head>
@@ -191,27 +204,28 @@
 <!-- LOGIN -->
 <div class="login-screen" id="loginScreen">
   <div class="login-box">
-    <h1>NETFLIX</h1>
+    <h1>LUAR TV</h1>
+    <div class="subtitle">✦ streaming ✦</div>
     <label>Correo electrónico</label>
-    <input type="email" id="userEmail" value="demo@netflix.com">
+    <input type="email" id="userEmail" value="demo@luartv.com">
     <label>Contraseña</label>
-    <input type="password" id="userPassword" value="netflix123">
+    <input type="password" id="userPassword" value="luar123">
     <button class="btn-login" id="loginBtn">Iniciar sesión</button>
     <div class="login-error" id="loginError">❌ Incorrecto</div>
-    <div class="demo-hint"><span>Demo:</span> demo@netflix.com / netflix123</div>
+    <div class="demo-hint"><span>Demo:</span> demo@luartv.com / luar123</div>
   </div>
 </div>
 
 <!-- NAVBAR -->
 <nav class="navbar" id="navbar">
   <div class="nav-left">
-    <div class="logo">NETFLIX</div>
-    <ul class="nav-links">
-      <li>Inicio</li>
-      <li>Series</li>
-      <li>Películas</li>
-      <li>Mi lista</li>
-      <li>Novedades</li>
+    <div class="logo">LUAR TV <small>stream</small></div>
+    <ul class="nav-links" id="navLinks">
+      <li class="active" data-section="inicio">Inicio</li>
+      <li data-section="peliculas">Películas</li>
+      <li data-section="series">Series</li>
+      <li data-section="mylist">Mi lista</li>
+      <li data-section="novedades">Novedades</li>
     </ul>
   </div>
   <div class="nav-right">
@@ -234,8 +248,8 @@
   </div>
 </nav>
 
-<!-- HERO -->
-<section class="hero" id="hero">
+<!-- HERO (solo visible en Inicio) -->
+<section class="hero" id="heroSection">
   <div class="hero-content">
     <h1>Stranger Things</h1>
     <div class="hero-badges"><span>2022</span><span>16+</span><span>4 temporadas</span><span>HD</span></div>
@@ -247,18 +261,59 @@
   </div>
 </section>
 
-<!-- FILAS -->
-<div class="row-section">
-  <div class="row-header"><h2>Mis series</h2><a id="addSeriesLink">+ Añadir serie</a></div>
-  <div class="movie-row" id="row-user-series"></div>
-</div>
-<div class="row-section">
-  <div class="row-header"><h2>Populares</h2><a id="addPopularLink">+ Añadir popular</a></div>
-  <div class="movie-row" id="row-popular"></div>
-</div>
-<div class="row-section">
-  <div class="row-header"><h2>Películas</h2><a id="addMovieLink">+ Añadir película</a></div>
-  <div class="movie-row" id="row-movies"></div>
+<!-- CONTENEDOR DE SECCIONES -->
+<div id="sectionsContainer">
+  <!-- SECCIÓN INICIO -->
+  <div class="section-container" id="section-inicio">
+    <div class="row-section">
+      <div class="row-header"><h2>Mis series</h2><a id="addSeriesLink">+ Añadir serie</a></div>
+      <div class="movie-row" id="row-user-series"></div>
+    </div>
+    <div class="row-section">
+      <div class="row-header"><h2>Populares</h2></div>
+      <div class="movie-row" id="row-popular"></div>
+    </div>
+    <div class="row-section">
+      <div class="row-header"><h2>Películas</h2><a id="addMovieLink">+ Añadir película</a></div>
+      <div class="movie-row" id="row-movies"></div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN PELÍCULAS -->
+  <div class="section-container hidden" id="section-peliculas">
+    <div class="row-section">
+      <div class="row-header"><h2>Todas las películas</h2><a id="addMovieLink2">+ Añadir película</a></div>
+      <div class="movie-row" id="row-all-movies"></div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN SERIES -->
+  <div class="section-container hidden" id="section-series">
+    <div class="row-section">
+      <div class="row-header"><h2>Todas las series</h2><a id="addSeriesLink2">+ Añadir serie</a></div>
+      <div class="movie-row" id="row-all-series"></div>
+    </div>
+    <div class="row-section">
+      <div class="row-header"><h2>Series populares</h2></div>
+      <div class="movie-row" id="row-popular-series"></div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN MI LISTA -->
+  <div class="section-container hidden" id="section-mylist">
+    <div class="row-section">
+      <div class="row-header"><h2>Mi lista</h2></div>
+      <div class="movie-row" id="row-mylist"></div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN NOVEDADES -->
+  <div class="section-container hidden" id="section-novedades">
+    <div class="row-section">
+      <div class="row-header"><h2>Últimos lanzamientos</h2></div>
+      <div class="movie-row" id="row-novedades"></div>
+    </div>
+  </div>
 </div>
 
 <!-- MODAL PRINCIPAL -->
@@ -271,17 +326,15 @@
       <p class="modal-description" id="modalDesc">Descripción.</p>
       <div class="modal-actions">
         <button class="btn btn-primary" id="modalPlayBtn"><i class="fas fa-play"></i> Reproducir</button>
-        <button class="btn btn-secondary"><i class="fas fa-plus"></i> Mi lista</button>
+        <button class="btn btn-secondary" id="modalAddToListBtn"><i class="fas fa-plus"></i> Mi lista</button>
       </div>
-      <!-- TRAILER -->
       <div id="trailerContainer" class="trailer-container"></div>
-      <!-- GESTIÓN DE SERIES (solo para series) -->
       <div id="seasonManager"></div>
     </div>
   </div>
 </div>
 
-<!-- MODAL AÑADIR SERIE -->
+<!-- MODALES AÑADIR -->
 <div class="modal-overlay add-modal" id="addSeriesModal">
   <div class="modal-card">
     <div class="modal-banner"><i class="fas fa-plus-circle"></i> Nueva serie</div>
@@ -295,7 +348,7 @@
       <input type="text" id="newSeriesDesc" placeholder="Breve descripción..." style="width:100%;padding:0.8rem;background:#333;border:none;border-radius:4px;color:#fff;margin-top:0.3rem;">
       <label style="display:block;margin-top:0.8rem;color:#ccc;">URL imagen</label>
       <input type="text" id="newSeriesImg" placeholder="https://..." style="width:100%;padding:0.8rem;background:#333;border:none;border-radius:4px;color:#fff;margin-top:0.3rem;">
-      <label style="display:block;margin-top:0.8rem;color:#ccc;">URL trailer (YouTube embed)</label>
+      <label style="display:block;margin-top:0.8rem;color:#ccc;">URL trailer</label>
       <input type="text" id="newSeriesTrailer" placeholder="https://www.youtube.com/embed/..." style="width:100%;padding:0.8rem;background:#333;border:none;border-radius:4px;color:#fff;margin-top:0.3rem;">
       <div style="display:flex;gap:1rem;margin-top:1.5rem;">
         <button class="btn btn-success" id="confirmAddSeries" style="flex:1;"><i class="fas fa-check"></i> Guardar</button>
@@ -305,31 +358,6 @@
   </div>
 </div>
 
-<!-- MODAL AÑADIR POPULAR -->
-<div class="modal-overlay add-modal" id="addPopularModal">
-  <div class="modal-card">
-    <div class="modal-banner"><i class="fas fa-fire"></i> Añadir popular</div>
-    <div class="modal-body">
-      <h2>Añadir serie popular</h2>
-      <label style="display:block;margin-top:0.5rem;color:#ccc;">Título</label>
-      <input type="text" id="newPopularTitle" placeholder="Serie popular" style="width:100%;padding:0.8rem;background:#333;border:none;border-radius:4px;color:#fff;margin-top:0.3rem;">
-      <label style="display:block;margin-top:0.8rem;color:#ccc;">Año</label>
-      <input type="text" id="newPopularYear" placeholder="2024" style="width:100%;padding:0.8rem;background:#333;border:none;border-radius:4px;color:#fff;margin-top:0.3rem;">
-      <label style="display:block;margin-top:0.8rem;color:#ccc;">Descripción</label>
-      <input type="text" id="newPopularDesc" placeholder="Descripción..." style="width:100%;padding:0.8rem;background:#333;border:none;border-radius:4px;color:#fff;margin-top:0.3rem;">
-      <label style="display:block;margin-top:0.8rem;color:#ccc;">URL imagen</label>
-      <input type="text" id="newPopularImg" placeholder="https://..." style="width:100%;padding:0.8rem;background:#333;border:none;border-radius:4px;color:#fff;margin-top:0.3rem;">
-      <label style="display:block;margin-top:0.8rem;color:#ccc;">URL trailer</label>
-      <input type="text" id="newPopularTrailer" placeholder="https://www.youtube.com/embed/..." style="width:100%;padding:0.8rem;background:#333;border:none;border-radius:4px;color:#fff;margin-top:0.3rem;">
-      <div style="display:flex;gap:1rem;margin-top:1.5rem;">
-        <button class="btn btn-success" id="confirmAddPopular" style="flex:1;"><i class="fas fa-check"></i> Guardar</button>
-        <button class="btn btn-secondary" id="cancelAddPopular" style="flex:1;">Cancelar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL AÑADIR PELÍCULA -->
 <div class="modal-overlay add-modal" id="addMovieModal">
   <div class="modal-card">
     <div class="modal-banner"><i class="fas fa-film"></i> Nueva película</div>
@@ -360,7 +388,7 @@
 <footer class="footer">
   <div class="footer-social"><i class="fab fa-facebook"></i><i class="fab fa-instagram"></i><i class="fab fa-twitter"></i><i class="fab fa-youtube"></i></div>
   <div class="footer-links"><a href="#">Audio y subtítulos</a><a href="#">Centro de ayuda</a><a href="#">Tarjetas de regalo</a><a href="#">Prensa</a><a href="#">Términos de uso</a><a href="#">Privacidad</a></div>
-  <div class="footer-copy">© 2026 Netflix Clone · Trailers y Películas</div>
+  <div class="footer-copy">© 2026 Luar TV · Todas las secciones</div>
 </footer>
 
 <script>
@@ -371,24 +399,24 @@
     const loginError = document.getElementById('loginError');
     const userEmail = document.getElementById('userEmail');
     const userPassword = document.getElementById('userPassword');
-    const VALID_EMAIL = 'demo@netflix.com';
-    const VALID_PASSWORD = 'netflix123';
+    const VALID_EMAIL = 'demo@luartv.com';
+    const VALID_PASSWORD = 'luar123';
     function doLogin() {
       if (userEmail.value.trim() === VALID_EMAIL && userPassword.value.trim() === VALID_PASSWORD) {
         loginScreen.classList.add('hidden');
         loginError.style.display = 'none';
-        localStorage.setItem('netflix_session', 'true');
+        localStorage.setItem('luartv_session', 'true');
       } else { loginError.style.display = 'block'; setTimeout(()=>loginError.style.display='none',4000); }
     }
     loginBtn.addEventListener('click', doLogin);
     userEmail.addEventListener('keydown', e=>{if(e.key==='Enter')doLogin();});
     userPassword.addEventListener('keydown', e=>{if(e.key==='Enter')doLogin();});
-    if (localStorage.getItem('netflix_session') === 'true') loginScreen.classList.add('hidden');
+    if (localStorage.getItem('luartv_session') === 'true') loginScreen.classList.add('hidden');
 
     // ====== NOTIFICACIONES ======
     const notifIcon = document.getElementById('notifIcon');
     const notifDropdown = document.getElementById('notifDropdown');
-    let notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+    let notifications = JSON.parse(localStorage.getItem('luartv_notifications')) || [];
     function renderNotifications() {
       notifDropdown.innerHTML = '';
       if (notifications.length === 0) {
@@ -405,7 +433,7 @@
     function addNotification(text) {
       notifications.push({ text, time: new Date().toLocaleTimeString() });
       if (notifications.length > 20) notifications.shift();
-      localStorage.setItem('notifications', JSON.stringify(notifications));
+      localStorage.setItem('luartv_notifications', JSON.stringify(notifications));
       renderNotifications();
     }
     notifIcon.addEventListener('click', (e) => {
@@ -426,7 +454,7 @@
     });
     document.addEventListener('click', () => { profileDropdown.classList.remove('show'); });
     document.getElementById('logoutDropdown').addEventListener('click', () => {
-      localStorage.removeItem('netflix_session');
+      localStorage.removeItem('luartv_session');
       loginScreen.classList.remove('hidden');
       profileDropdown.classList.remove('show');
     });
@@ -447,12 +475,47 @@
       });
     });
 
+    // ====== NAVEGACIÓN POR SECCIONES ======
+    const navLinks = document.querySelectorAll('.nav-links li');
+    const sections = {
+      inicio: document.getElementById('section-inicio'),
+      peliculas: document.getElementById('section-peliculas'),
+      series: document.getElementById('section-series'),
+      mylist: document.getElementById('section-mylist'),
+      novedades: document.getElementById('section-novedades')
+    };
+    const heroSection = document.getElementById('heroSection');
+
+    function navigateTo(sectionId) {
+      // Ocultar todas
+      Object.values(sections).forEach(s => s.classList.add('hidden'));
+      // Mostrar la seleccionada
+      if (sections[sectionId]) sections[sectionId].classList.remove('hidden');
+      // Hero solo en inicio
+      heroSection.style.display = (sectionId === 'inicio') ? 'flex' : 'none';
+      // Activar link
+      navLinks.forEach(link => {
+        link.classList.toggle('active', link.dataset.section === sectionId);
+      });
+      // Refrescar filas según sección
+      if (sectionId === 'peliculas') renderAllMovies();
+      if (sectionId === 'series') { renderAllSeries(); renderPopularSeries(); }
+      if (sectionId === 'mylist') renderMyList();
+      if (sectionId === 'novedades') renderNovedades();
+      if (sectionId === 'inicio') { renderUserSeries(); renderPopular(); renderMovies(); }
+    }
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        navigateTo(link.dataset.section);
+      });
+    });
+
     // ====== FUNCIONES DE REPRODUCCIÓN ======
     function playTrailer(trailerUrl, title) {
       const container = document.getElementById('trailerContainer');
       if (trailerUrl && trailerUrl.trim() !== '') {
         let url = trailerUrl.trim();
-        // Si es un enlace de YouTube normal, convertirlo a embed
         if (url.includes('youtube.com/watch?v=')) {
           const videoId = url.split('v=')[1]?.split('&')[0];
           if (videoId) url = `https://www.youtube.com/embed/${videoId}`;
@@ -463,8 +526,9 @@
       }
     }
 
-    // ====== SISTEMA DE SERIES (MIS SERIES) ======
-    let userSeries = JSON.parse(localStorage.getItem('userSeries')) || [];
+    // ====== SISTEMA DE DATOS ======
+    // User Series
+    let userSeries = JSON.parse(localStorage.getItem('luartv_userSeries')) || [];
     if (userSeries.length === 0) {
       userSeries.push({
         id: Date.now() + 1,
@@ -473,14 +537,139 @@
         description: 'Serie creada por el usuario con enlaces por capítulo y trailer.',
         image: 'https://image.tmdb.org/t/p/w200/7dHw9sXfLhA5nKc7XqJmZq6nLQc.jpg',
         trailer: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-        seasons: [
-          { number: 1, episodes: [{ title: 'Episodio 1', link: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }, { title: 'Episodio 2', link: '' }] }
-        ]
+        seasons: [{ number: 1, episodes: [{ title: 'Episodio 1', link: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }] }],
+        isNew: true,
+        addedToList: false
       });
       saveUserSeries();
     }
-    function saveUserSeries() { localStorage.setItem('userSeries', JSON.stringify(userSeries)); }
+    function saveUserSeries() { localStorage.setItem('luartv_userSeries', JSON.stringify(userSeries)); }
 
+    // Popular Series
+    let popularSeries = JSON.parse(localStorage.getItem('luartv_popularSeries')) || [];
+    if (popularSeries.length === 0) {
+      popularSeries = [
+        { id: Date.now()+100, title:'El juego del calamar', year:'2021', description:'Cientos de jugadores en apuros aceptan un desafío letal.', image:'https://image.tmdb.org/t/p/w200/6dGIFuS5wMOhgW2VHbYg4ciMpgS.jpg', trailer:'https://www.youtube.com/embed/oqxAJKy0ii4', seasons:[{number:1, episodes:[{title:'Episodio 1', link:'https://www.youtube.com/watch?v=oqxAJKy0ii4'}]}], isNew:false, addedToList:false },
+        { id: Date.now()+101, title:'La casa de papel', year:'2017', description:'El mayor atraco de la historia.', image:'https://image.tmdb.org/t/p/w200/eg0jVU1xJcAYbh2WJ0GSUhCvYn8.jpg', trailer:'https://www.youtube.com/embed/hMANIarjT50', seasons:[{number:1, episodes:[{title:'Episodio 1', link:'https://www.youtube.com/watch?v=hMANIarjT50'}]}], isNew:false, addedToList:false },
+        { id: Date.now()+102, title:'Narcos', year:'2015', description:'La historia de Pablo Escobar.', image:'https://image.tmdb.org/t/p/w200/rP8xr03R6c9HfsD0ZxQnQr7VnOj.jpg', trailer:'https://www.youtube.com/embed/xl8zdCY-abw', seasons:[{number:1, episodes:[{title:'Episodio 1', link:'https://www.youtube.com/watch?v=xl8zdCY-abw'}]}], isNew:false, addedToList:false },
+        { id: Date.now()+103, title:'The Witcher', year:'2019', description:'Geralt de Rivia, cazador de monstruos.', image:'https://image.tmdb.org/t/p/w200/7dHw9sXfLhA5nKc7XqJmZq6nLQc.jpg', trailer:'https://www.youtube.com/embed/ndl1W4ltcmg', seasons:[{number:1, episodes:[{title:'Episodio 1', link:'https://www.youtube.com/watch?v=ndl1W4ltcmg'}]}], isNew:false, addedToList:false },
+        { id: Date.now()+104, title:'Bridgerton', year:'2020', description:'Amor y secretos en la Londres de la Regencia.', image:'https://image.tmdb.org/t/p/w200/5UyV7ZzNm4M6rUZbQqZzU8nZQn.jpg', trailer:'https://www.youtube.com/embed/gpv7ayf_5cE', seasons:[{number:1, episodes:[{title:'Episodio 1', link:'https://www.youtube.com/watch?v=gpv7ayf_5cE'}]}], isNew:false, addedToList:false },
+        { id: Date.now()+105, title:'Stranger Things', year:'2022', description:'Fuerzas sobrenaturales en los 80.', image:'https://image.tmdb.org/t/p/w200/56v2KjG6bG6vNnQzQZzZ8nZQn.jpg', trailer:'https://www.youtube.com/embed/b9EkMc79ZSU', seasons:[{number:1, episodes:[{title:'Episodio 1', link:'https://www.youtube.com/watch?v=b9EkMc79ZSU'}]}], isNew:false, addedToList:false }
+      ];
+      savePopularSeries();
+    }
+    function savePopularSeries() { localStorage.setItem('luartv_popularSeries', JSON.stringify(popularSeries)); }
+
+    // Movies
+    let movies = JSON.parse(localStorage.getItem('luartv_movies')) || [];
+    if (movies.length === 0) {
+      movies = [
+        { id: Date.now()+200, title:'Inception', year:'2010', description:'Un ladrón que roba secretos del subconsciente.', image:'https://image.tmdb.org/t/p/w200/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg', trailer:'https://www.youtube.com/embed/YoHD9XEInc0', isNew:false, addedToList:false },
+        { id: Date.now()+201, title:'The Matrix', year:'1999', description:'Un hacker descubre la verdad sobre la realidad.', image:'https://image.tmdb.org/t/p/w200/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg', trailer:'https://www.youtube.com/embed/vKQi3bBA1y8', isNew:false, addedToList:false },
+        { id: Date.now()+202, title:'Interstellar', year:'2014', description:'Un viaje espacial para salvar a la humanidad.', image:'https://image.tmdb.org/t/p/w200/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg', trailer:'https://www.youtube.com/embed/zSWdZVtXT7E', isNew:false, addedToList:false },
+        { id: Date.now()+203, title:'The Dark Knight', year:'2008', description:'Batman enfrenta al Joker en Gotham.', image:'https://image.tmdb.org/t/p/w200/qJ2tW6WMUDux911r6m7haRef0WH.jpg', trailer:'https://www.youtube.com/embed/EXeTwQWrcwY', isNew:false, addedToList:false },
+        { id: Date.now()+204, title:'Avatar', year:'2009', description:'Un marine en un mundo alienígena.', image:'https://image.tmdb.org/t/p/w200/kyeqWdyUXW608qlYkRqosg2JyXg.jpg', trailer:'https://www.youtube.com/embed/5PSNL1qE6VY', isNew:true, addedToList:false },
+        { id: Date.now()+205, title:'Dune', year:'2021', description:'La épica historia de Paul Atreides en Arrakis.', image:'https://image.tmdb.org/t/p/w200/8B8t8P5c6nZ9nZ9nZ9nZ9nZ9nZ9.jpg', trailer:'https://www.youtube.com/embed/8B8t8P5c6nY', isNew:true, addedToList:false }
+      ];
+      saveMovies();
+    }
+    function saveMovies() { localStorage.setItem('luartv_movies', JSON.stringify(movies)); }
+
+    // Mi lista
+    let myList = JSON.parse(localStorage.getItem('luartv_mylist')) || [];
+    function saveMyList() { localStorage.setItem('luartv_mylist', JSON.stringify(myList)); }
+
+    // ====== FUNCIONES PARA OBTENER TODOS LOS ÍTEMS ======
+    function getAllItems() {
+      return [...userSeries, ...popularSeries, ...movies];
+    }
+
+    function getSeriesItems() {
+      return [...userSeries, ...popularSeries];
+    }
+
+    function getMovieItems() {
+      return [...movies];
+    }
+
+    function getNewItems() {
+      return getAllItems().filter(item => item.isNew === true);
+    }
+
+    // ====== FUNCIÓN PARA CREAR ÍTEMS ======
+    function createMovieItem(item, type, badgeText, badgeClass, showAddToList = true) {
+      const div = document.createElement('div');
+      div.className = 'movie-item';
+      const imgSrc = item.image || 'https://via.placeholder.com/200x110/2a2a2a/666?text=Sin+imagen';
+      const inList = myList.some(i => i.id === item.id);
+      div.innerHTML = `
+        <img src="${imgSrc}" alt="${item.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/200x110/2a2a2a/666?text=LuarTV'">
+        <div class="movie-info"><h4>${item.title}</h4><div class="movie-meta"><span><i class="fas fa-star"></i> ${Math.floor(85+Math.random()*15)}%</span><span>${item.year||'2024'}</span></div></div>
+        <div class="${badgeClass}">${badgeText}</div>
+        ${item.isNew ? '<div class="badge-new">NUEVO</div>' : ''}
+        <button class="delete-btn" data-id="${item.id}" data-type="${type}"><i class="fas fa-trash"></i></button>
+        <div class="play-btn-overlay"><i class="fas fa-play"></i></div>
+        ${showAddToList ? `<button class="add-to-list-btn ${inList ? 'in-list' : ''}" data-id="${item.id}" title="${inList ? 'Quitar de mi lista' : 'Añadir a mi lista'}"><i class="fas ${inList ? 'fa-check' : 'fa-plus'}"></i></button>` : ''}
+      `;
+      
+      div.addEventListener('click', (e) => {
+        if (e.target.closest('.delete-btn') || e.target.closest('.add-to-list-btn')) return;
+        if (type === 'movie') openMovieModal(item.id);
+        else openSeriesModal(item.id, type);
+      });
+      
+      div.querySelector('.delete-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (confirm(`¿Eliminar "${item.title}"?`)) {
+          if (type === 'user') {
+            userSeries = userSeries.filter(s => s.id !== item.id);
+            saveUserSeries();
+          } else if (type === 'popular') {
+            popularSeries = popularSeries.filter(s => s.id !== item.id);
+            savePopularSeries();
+          } else if (type === 'movie') {
+            movies = movies.filter(m => m.id !== item.id);
+            saveMovies();
+          }
+          // Quitar de mi lista si estaba
+          myList = myList.filter(i => i.id !== item.id);
+          saveMyList();
+          refreshCurrentView();
+          addNotification(`"${item.title}" eliminado`);
+        }
+      });
+
+      // Botón añadir a mi lista
+      const addBtn = div.querySelector('.add-to-list-btn');
+      if (addBtn) {
+        addBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleMyList(item);
+          refreshCurrentView();
+        });
+      }
+
+      return div;
+    }
+
+    function toggleMyList(item) {
+      const index = myList.findIndex(i => i.id === item.id);
+      if (index > -1) {
+        myList.splice(index, 1);
+        addNotification(`"${item.title}" eliminado de mi lista`);
+      } else {
+        myList.push({ ...item });
+        addNotification(`"${item.title}" añadido a mi lista`);
+      }
+      saveMyList();
+    }
+
+    function refreshCurrentView() {
+      const active = document.querySelector('.nav-links li.active');
+      if (active) navigateTo(active.dataset.section);
+    }
+
+    // ====== RENDERIZAR SECCIONES ======
     function renderUserSeries() {
       const container = document.getElementById('row-user-series');
       container.innerHTML = '';
@@ -489,51 +678,21 @@
         return;
       }
       userSeries.forEach(series => {
-        const item = createMovieItem(series, 'user', '✏️ Usuario');
-        container.appendChild(item);
+        container.appendChild(createMovieItem(series, 'user', '✏️ Usuario', 'badge-user'));
       });
     }
-
-    // ====== SISTEMA DE POPULARES ======
-    let popularSeries = JSON.parse(localStorage.getItem('popularSeries')) || [];
-    if (popularSeries.length === 0) {
-      popularSeries = [
-        { id: Date.now()+100, title:'El juego del calamar', year:'2021', description:'Cientos de jugadores en apuros aceptan un desafío letal.', image:'https://image.tmdb.org/t/p/w200/6dGIFuS5wMOhgW2VHbYg4ciMpgS.jpg', trailer:'https://www.youtube.com/embed/oqxAJKy0ii4', seasons:[{number:1, episodes:[{title:'Episodio 1', link:'https://www.youtube.com/watch?v=oqxAJKy0ii4'}]}] },
-        { id: Date.now()+101, title:'La casa de papel', year:'2017', description:'El mayor atraco de la historia.', image:'https://image.tmdb.org/t/p/w200/eg0jVU1xJcAYbh2WJ0GSUhCvYn8.jpg', trailer:'https://www.youtube.com/embed/hMANIarjT50', seasons:[{number:1, episodes:[{title:'Episodio 1', link:'https://www.youtube.com/watch?v=hMANIarjT50'}]}] },
-        { id: Date.now()+102, title:'Narcos', year:'2015', description:'La historia de Pablo Escobar.', image:'https://image.tmdb.org/t/p/w200/rP8xr03R6c9HfsD0ZxQnQr7VnOj.jpg', trailer:'https://www.youtube.com/embed/xl8zdCY-abw', seasons:[{number:1, episodes:[{title:'Episodio 1', link:'https://www.youtube.com/watch?v=xl8zdCY-abw'}]}] },
-        { id: Date.now()+103, title:'The Witcher', year:'2019', description:'Geralt de Rivia, cazador de monstruos.', image:'https://image.tmdb.org/t/p/w200/7dHw9sXfLhA5nKc7XqJmZq6nLQc.jpg', trailer:'https://www.youtube.com/embed/ndl1W4ltcmg', seasons:[{number:1, episodes:[{title:'Episodio 1', link:'https://www.youtube.com/watch?v=ndl1W4ltcmg'}]}] },
-        { id: Date.now()+104, title:'Bridgerton', year:'2020', description:'Amor y secretos en la Londres de la Regencia.', image:'https://image.tmdb.org/t/p/w200/5UyV7ZzNm4M6rUZbQqZzU8nZQn.jpg', trailer:'https://www.youtube.com/embed/gpv7ayf_5cE', seasons:[{number:1, episodes:[{title:'Episodio 1', link:'https://www.youtube.com/watch?v=gpv7ayf_5cE'}]}] },
-        { id: Date.now()+105, title:'Stranger Things', year:'2022', description:'Fuerzas sobrenaturales en los 80.', image:'https://image.tmdb.org/t/p/w200/56v2KjG6bG6vNnQzQZzZ8nZQn.jpg', trailer:'https://www.youtube.com/embed/b9EkMc79ZSU', seasons:[{number:1, episodes:[{title:'Episodio 1', link:'https://www.youtube.com/watch?v=b9EkMc79ZSU'}]}] }
-      ];
-      savePopularSeries();
-    }
-    function savePopularSeries() { localStorage.setItem('popularSeries', JSON.stringify(popularSeries)); }
 
     function renderPopular() {
       const container = document.getElementById('row-popular');
       container.innerHTML = '';
       if (popularSeries.length === 0) {
-        container.innerHTML = '<p style="color:#888;padding:1rem 0;">No hay series populares. ¡Añade una!</p>';
+        container.innerHTML = '<p style="color:#888;padding:1rem 0;">No hay series populares.</p>';
         return;
       }
       popularSeries.forEach(series => {
-        const item = createMovieItem(series, 'popular', '🔥 Popular');
-        container.appendChild(item);
+        container.appendChild(createMovieItem(series, 'popular', '🔥 Popular', 'badge-popular'));
       });
     }
-
-    // ====== SISTEMA DE PELÍCULAS ======
-    let movies = JSON.parse(localStorage.getItem('movies')) || [];
-    if (movies.length === 0) {
-      movies = [
-        { id: Date.now()+200, title:'Inception', year:'2010', description:'Un ladrón que roba secretos del subconsciente.', image:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRP4rhOs-wJHI1YZsRrTRC0-lFBXJ6feA8qkKlp26FoqdwonVMu3gB3tzlqXTS75ZaShn5F69XJnt6yV7E-HG2GW6sbrja4cDqCbx4h0b7xQ&s=10', trailer:'https://www.youtube.com/embed/YoHD9XEInc0' },
-        { id: Date.now()+201, title:'The Matrix', year:'1999', description:'Un hacker descubre la verdad sobre la realidad.', image:'https://image.tmdb.org/t/p/w200/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg', trailer:'https://www.youtube.com/embed/vKQi3bBA1y8' },
-        { id: Date.now()+202, title:'Interstellar', year:'2014', description:'Un viaje espacial para salvar a la humanidad.', image:'https://image.tmdb.org/t/p/w200/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg', trailer:'https://www.youtube.com/embed/zSWdZVtXT7E' },
-        { id: Date.now()+203, title:'The Dark Knight', year:'2008', description:'Batman enfrenta al Joker en Gotham.', image:'https://image.tmdb.org/t/p/w200/qJ2tW6WMUDux911r6m7haRef0WH.jpg', trailer:'https://www.youtube.com/embed/EXeTwQWrcwY' }
-      ];
-      saveMovies();
-    }
-    function saveMovies() { localStorage.setItem('movies', JSON.stringify(movies)); }
 
     function renderMovies() {
       const container = document.getElementById('row-movies');
@@ -542,62 +701,84 @@
         container.innerHTML = '<p style="color:#888;padding:1rem 0;">No hay películas. ¡Añade una!</p>';
         return;
       }
+      movies.slice(0, 6).forEach(movie => {
+        container.appendChild(createMovieItem(movie, 'movie', '🎬 Película', 'badge-movie'));
+      });
+    }
+
+    function renderAllMovies() {
+      const container = document.getElementById('row-all-movies');
+      container.innerHTML = '';
+      if (movies.length === 0) {
+        container.innerHTML = '<p style="color:#888;padding:1rem 0;">No hay películas disponibles.</p>';
+        return;
+      }
       movies.forEach(movie => {
-        const item = createMovieItem(movie, 'movie', '🎬 Película');
-        container.appendChild(item);
+        container.appendChild(createMovieItem(movie, 'movie', '🎬 Película', 'badge-movie'));
       });
     }
 
-    // ====== FUNCIÓN PARA CREAR ÍTEMS ======
-    function createMovieItem(item, type, badgeText) {
-      const div = document.createElement('div');
-      div.className = 'movie-item';
-      const imgSrc = item.image || 'https://via.placeholder.com/200x110/2a2a2a/666?text=Sin+imagen';
-      div.innerHTML = `
-        <img src="${imgSrc}" alt="${item.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/200x110/2a2a2a/666?text=Netflix'">
-        <div class="movie-info"><h4>${item.title}</h4><div class="movie-meta"><span><i class="fas fa-star"></i> ${Math.floor(85+Math.random()*15)}%</span><span>${item.year||'2024'}</span></div></div>
-        <div class="badge-${type === 'movie' ? 'movie' : (type === 'popular' ? 'popular' : 'user')}">${badgeText}</div>
-        <button class="delete-btn" data-id="${item.id}" data-type="${type}"><i class="fas fa-trash"></i></button>
-        <div class="play-btn-overlay"><i class="fas fa-play"></i></div>
-      `;
-      div.addEventListener('click', (e) => {
-        if (e.target.closest('.delete-btn')) return;
-        if (type === 'movie') openMovieModal(item.id);
-        else openSeriesModal(item.id, type);
+    function renderAllSeries() {
+      const container = document.getElementById('row-all-series');
+      container.innerHTML = '';
+      const allSeries = [...userSeries, ...popularSeries];
+      if (allSeries.length === 0) {
+        container.innerHTML = '<p style="color:#888;padding:1rem 0;">No hay series disponibles.</p>';
+        return;
+      }
+      allSeries.forEach(series => {
+        const type = userSeries.some(s => s.id === series.id) ? 'user' : 'popular';
+        const badge = userSeries.some(s => s.id === series.id) ? '✏️ Usuario' : '🔥 Popular';
+        const badgeClass = userSeries.some(s => s.id === series.id) ? 'badge-user' : 'badge-popular';
+        container.appendChild(createMovieItem(series, type, badge, badgeClass));
       });
-      div.querySelector('.delete-btn').addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (confirm(`¿Eliminar "${item.title}"?`)) {
-          if (type === 'user') {
-            userSeries = userSeries.filter(s => s.id !== item.id);
-            saveUserSeries();
-            renderUserSeries();
-          } else if (type === 'popular') {
-            popularSeries = popularSeries.filter(s => s.id !== item.id);
-            savePopularSeries();
-            renderPopular();
-          } else {
-            movies = movies.filter(m => m.id !== item.id);
-            saveMovies();
-            renderMovies();
-          }
-          addNotification(`"${item.title}" eliminado`);
-        }
-      });
-      return div;
     }
 
-    // ====== FUNCIONES PARA OBTENER DATOS ======
-    function getSeriesById(id, type) {
-      if (type === 'user') return userSeries.find(s => s.id === id);
-      return popularSeries.find(s => s.id === id);
+    function renderPopularSeries() {
+      const container = document.getElementById('row-popular-series');
+      container.innerHTML = '';
+      if (popularSeries.length === 0) {
+        container.innerHTML = '<p style="color:#888;padding:1rem 0;">No hay series populares.</p>';
+        return;
+      }
+      popularSeries.forEach(series => {
+        container.appendChild(createMovieItem(series, 'popular', '🔥 Popular', 'badge-popular'));
+      });
     }
-    function getSeriesList(type) {
-      return type === 'user' ? userSeries : popularSeries;
+
+    function renderMyList() {
+      const container = document.getElementById('row-mylist');
+      container.innerHTML = '';
+      if (myList.length === 0) {
+        container.innerHTML = '<p style="color:#888;padding:1rem 0;">No hay contenido en tu lista. ¡Añade series o películas!</p>';
+        return;
+      }
+      myList.forEach(item => {
+        let type = 'movie';
+        let badge = '🎬 Película';
+        let badgeClass = 'badge-movie';
+        if (userSeries.some(s => s.id === item.id)) { type = 'user'; badge = '✏️ Usuario'; badgeClass = 'badge-user'; }
+        else if (popularSeries.some(s => s.id === item.id)) { type = 'popular'; badge = '🔥 Popular'; badgeClass = 'badge-popular'; }
+        container.appendChild(createMovieItem(item, type, badge, badgeClass, true));
+      });
     }
-    function saveSeriesList(type) {
-      if (type === 'user') saveUserSeries();
-      else savePopularSeries();
+
+    function renderNovedades() {
+      const container = document.getElementById('row-novedades');
+      container.innerHTML = '';
+      const newItems = getNewItems();
+      if (newItems.length === 0) {
+        container.innerHTML = '<p style="color:#888;padding:1rem 0;">No hay novedades por el momento.</p>';
+        return;
+      }
+      newItems.forEach(item => {
+        let type = 'movie';
+        let badge = '🎬 Película';
+        let badgeClass = 'badge-movie';
+        if (userSeries.some(s => s.id === item.id)) { type = 'user'; badge = '✏️ Usuario'; badgeClass = 'badge-user'; }
+        else if (popularSeries.some(s => s.id === item.id)) { type = 'popular'; badge = '🔥 Popular'; badgeClass = 'badge-popular'; }
+        container.appendChild(createMovieItem(item, type, badge, badgeClass, true));
+      });
     }
 
     // ====== MODAL SERIES ======
@@ -606,39 +787,73 @@
     const modalOverlay = document.getElementById('modalOverlay');
     const modalCloseBtn = document.getElementById('modalCloseBtn');
     const modalPlayBtn = document.getElementById('modalPlayBtn');
+    const modalAddToListBtn = document.getElementById('modalAddToListBtn');
+
+    function getItemById(id, type) {
+      if (type === 'user') return userSeries.find(s => s.id === id);
+      if (type === 'popular') return popularSeries.find(s => s.id === id);
+      return movies.find(m => m.id === id);
+    }
+
+    function getItemList(type) {
+      if (type === 'user') return userSeries;
+      if (type === 'popular') return popularSeries;
+      return movies;
+    }
+
+    function saveItemList(type) {
+      if (type === 'user') saveUserSeries();
+      else if (type === 'popular') savePopularSeries();
+      else saveMovies();
+    }
 
     function openSeriesModal(id, type) {
-      const series = getSeriesById(id, type);
-      if (!series) return;
+      const item = getItemById(id, type);
+      if (!item) return;
       currentItemId = id;
       currentItemType = type;
-      document.getElementById('modalImg').src = series.image || 'https://via.placeholder.com/750x200/2a2a2a/666?text=Serie';
-      document.getElementById('modalTitle').textContent = series.title;
-      document.getElementById('modalDesc').textContent = series.description || 'Sin descripción.';
+      document.getElementById('modalImg').src = item.image || 'https://via.placeholder.com/750x200/2a2a2a/666?text=Serie';
+      document.getElementById('modalTitle').textContent = item.title;
+      document.getElementById('modalDesc').textContent = item.description || 'Sin descripción.';
       const meta = document.querySelector('.modal-meta');
-      meta.innerHTML = `<span class="match"><i class="fas fa-star"></i> ${Math.floor(85+Math.random()*15)}%</span><span>${series.year||'2024'}</span><span>16+</span><span>${series.seasons.length} temp.</span><span>HD</span>`;
+      const isMovie = type === 'movie';
+      meta.innerHTML = `<span class="match"><i class="fas fa-star"></i> ${Math.floor(85+Math.random()*15)}%</span><span>${item.year||'2024'}</span><span>${isMovie ? '12+' : '16+'}</span>${isMovie ? '<span>Duración: 2h</span>' : `<span>${item.seasons?.length || 0} temp.</span>`}<span>HD</span>`;
       
-      // Trailer
-      playTrailer(series.trailer, series.title);
+      playTrailer(item.trailer, item.title);
       
-      // Season manager
-      renderSeasonManager(series, type);
+      if (!isMovie && item.seasons) {
+        renderSeasonManager(item, type);
+      } else {
+        document.getElementById('seasonManager').innerHTML = '';
+      }
       
-      // Botón reproducir
       modalPlayBtn.onclick = () => {
-        if (series.trailer) {
-          playTrailer(series.trailer, series.title);
-          addNotification(`Reproduciendo trailer de "${series.title}"`);
+        if (item.trailer) {
+          playTrailer(item.trailer, item.title);
+          addNotification(`Reproduciendo trailer de "${item.title}"`);
         } else {
-          addNotification(`No hay trailer disponible para "${series.title}"`);
+          addNotification(`No hay trailer disponible para "${item.title}"`);
         }
+      };
+
+      const inList = myList.some(i => i.id === item.id);
+      modalAddToListBtn.innerHTML = `<i class="fas ${inList ? 'fa-check' : 'fa-plus'}"></i> ${inList ? 'En mi lista' : 'Mi lista'}`;
+      modalAddToListBtn.onclick = () => {
+        toggleMyList(item);
+        const nowInList = myList.some(i => i.id === item.id);
+        modalAddToListBtn.innerHTML = `<i class="fas ${nowInList ? 'fa-check' : 'fa-plus'}"></i> ${nowInList ? 'En mi lista' : 'Mi lista'}`;
+        refreshCurrentView();
       };
       
       modalOverlay.classList.add('active');
       document.body.style.overflow = 'hidden';
     }
 
-    function renderSeasonManager(series, type) {
+    function openMovieModal(id) {
+      openSeriesModal(id, 'movie');
+    }
+
+    function renderSeasonManager(item, type) {
       const container = document.getElementById('seasonManager');
       container.innerHTML = '';
       const addSeasonBtn = document.createElement('button');
@@ -646,16 +861,15 @@
       addSeasonBtn.style.marginBottom = '1rem';
       addSeasonBtn.innerHTML = '<i class="fas fa-plus"></i> Añadir temporada';
       addSeasonBtn.addEventListener('click', () => {
-        series.seasons.push({ number: series.seasons.length + 1, episodes: [] });
-        saveSeriesList(type);
-        renderSeasonManager(series, type);
-        if (type === 'user') renderUserSeries();
-        else renderPopular();
-        addNotification(`Temporada ${series.seasons.length} añadida a "${series.title}"`);
+        item.seasons.push({ number: item.seasons.length + 1, episodes: [] });
+        saveItemList(type);
+        renderSeasonManager(item, type);
+        refreshCurrentView();
+        addNotification(`Temporada ${item.seasons.length} añadida a "${item.title}"`);
       });
       container.appendChild(addSeasonBtn);
 
-      if (series.seasons.length === 0) {
+      if (!item.seasons || item.seasons.length === 0) {
         const p = document.createElement('p');
         p.style.color = '#888';
         p.textContent = 'Sin temporadas. ¡Añade una!';
@@ -663,7 +877,7 @@
         return;
       }
 
-      series.seasons.forEach((season, idx) => {
+      item.seasons.forEach((season, idx) => {
         const div = document.createElement('div');
         div.className = 'season-item';
         div.innerHTML = `
@@ -671,7 +885,7 @@
             <strong>Temporada ${season.number}</strong>
             <button class="btn-sm danger" data-season-idx="${idx}"><i class="fas fa-trash"></i> Eliminar</button>
           </div>
-          <div class="episode-list" id="episode-list-${idx}">
+          <div class="episode-list">
             ${season.episodes.map((ep, epIdx) => `
               <div class="episode-item">
                 <span class="episode-title">${ep.title}</span>
@@ -692,12 +906,11 @@
 
         div.querySelector('.btn-sm.danger').addEventListener('click', () => {
           if (confirm(`¿Eliminar temporada ${season.number}?`)) {
-            series.seasons.splice(idx, 1);
-            series.seasons.forEach((s, i) => s.number = i + 1);
-            saveSeriesList(type);
-            renderSeasonManager(series, type);
-            if (type === 'user') renderUserSeries();
-            else renderPopular();
+            item.seasons.splice(idx, 1);
+            item.seasons.forEach((s, i) => s.number = i + 1);
+            saveItemList(type);
+            renderSeasonManager(item, type);
+            refreshCurrentView();
             addNotification(`Temporada ${season.number} eliminada`);
           }
         });
@@ -708,12 +921,11 @@
           const title = titleInput.value.trim();
           if (!title) return alert('Escribe un título.');
           const sIdx = parseInt(this.dataset.season);
-          series.seasons[sIdx].episodes.push({ title, link: linkInput.value.trim() || '' });
-          saveSeriesList(type);
-          renderSeasonManager(series, type);
-          if (type === 'user') renderUserSeries();
-          else renderPopular();
-          addNotification(`Capítulo "${title}" añadido a "${series.title}"`);
+          item.seasons[sIdx].episodes.push({ title, link: linkInput.value.trim() || '' });
+          saveItemList(type);
+          renderSeasonManager(item, type);
+          refreshCurrentView();
+          addNotification(`Capítulo "${title}" añadido a "${item.title}"`);
         });
 
         div.querySelectorAll('.episode-delete').forEach(el => {
@@ -721,12 +933,11 @@
             const sIdx = parseInt(this.dataset.season);
             const epIdx = parseInt(this.dataset.ep);
             if (confirm('¿Eliminar este capítulo?')) {
-              const epTitle = series.seasons[sIdx].episodes[epIdx].title;
-              series.seasons[sIdx].episodes.splice(epIdx, 1);
-              saveSeriesList(type);
-              renderSeasonManager(series, type);
-              if (type === 'user') renderUserSeries();
-              else renderPopular();
+              const epTitle = item.seasons[sIdx].episodes[epIdx].title;
+              item.seasons[sIdx].episodes.splice(epIdx, 1);
+              saveItemList(type);
+              renderSeasonManager(item, type);
+              refreshCurrentView();
               addNotification(`Capítulo "${epTitle}" eliminado`);
             }
           });
@@ -739,38 +950,6 @@
           if (e.key === 'Enter') { e.preventDefault(); div.querySelector('.add-episode-btn').click(); }
         });
       });
-    }
-
-    // ====== MODAL PELÍCULAS ======
-    function openMovieModal(id) {
-      const movie = movies.find(m => m.id === id);
-      if (!movie) return;
-      currentItemId = id;
-      currentItemType = 'movie';
-      document.getElementById('modalImg').src = movie.image || 'https://via.placeholder.com/750x200/2a2a2a/666?text=Película';
-      document.getElementById('modalTitle').textContent = movie.title;
-      document.getElementById('modalDesc').textContent = movie.description || 'Sin descripción.';
-      const meta = document.querySelector('.modal-meta');
-      meta.innerHTML = `<span class="match"><i class="fas fa-star"></i> ${Math.floor(85+Math.random()*15)}%</span><span>${movie.year||'2024'}</span><span>12+</span><span>Duración: 2h</span><span>HD</span>`;
-      
-      // Trailer
-      playTrailer(movie.trailer, movie.title);
-      
-      // Ocultar season manager
-      document.getElementById('seasonManager').innerHTML = '';
-      
-      // Botón reproducir
-      modalPlayBtn.onclick = () => {
-        if (movie.trailer) {
-          playTrailer(movie.trailer, movie.title);
-          addNotification(`Reproduciendo trailer de "${movie.title}"`);
-        } else {
-          addNotification(`No hay trailer disponible para "${movie.title}"`);
-        }
-      };
-      
-      modalOverlay.classList.add('active');
-      document.body.style.overflow = 'hidden';
     }
 
     function closeMainModal() {
@@ -786,9 +965,9 @@
     }
 
     // ====== MODALES AÑADIR ======
-    // Añadir serie
     const addSeriesModal = document.getElementById('addSeriesModal');
-    const addSeriesLink = document.getElementById('addSeriesLink');
+    document.getElementById('addSeriesLink').addEventListener('click', () => openAddModal(addSeriesModal));
+    document.getElementById('addSeriesLink2').addEventListener('click', () => openAddModal(addSeriesModal));
     document.getElementById('cancelAddSeries').addEventListener('click', () => addSeriesModal.classList.remove('active'));
     document.getElementById('confirmAddSeries').addEventListener('click', () => {
       const title = document.getElementById('newSeriesTitle').value.trim();
@@ -797,42 +976,22 @@
         id: Date.now(),
         title,
         year: document.getElementById('newSeriesYear').value.trim() || '2024',
-        description: document.getElementById('newSeriesDesc').value.trim() || 'Serie añadida por el usuario.',
+        description: document.getElementById('newSeriesDesc').value.trim() || 'Serie añadida.',
         image: document.getElementById('newSeriesImg').value.trim() || 'https://image.tmdb.org/t/p/w200/7dHw9sXfLhA5nKc7XqJmZq6nLQc.jpg',
         trailer: document.getElementById('newSeriesTrailer').value.trim() || '',
-        seasons: []
+        seasons: [],
+        isNew: true,
+        addedToList: false
       });
       saveUserSeries();
-      renderUserSeries();
       addSeriesModal.classList.remove('active');
+      refreshCurrentView();
       addNotification(`Serie "${title}" creada`);
     });
 
-    // Añadir popular
-    const addPopularModal = document.getElementById('addPopularModal');
-    const addPopularLink = document.getElementById('addPopularLink');
-    document.getElementById('cancelAddPopular').addEventListener('click', () => addPopularModal.classList.remove('active'));
-    document.getElementById('confirmAddPopular').addEventListener('click', () => {
-      const title = document.getElementById('newPopularTitle').value.trim();
-      if (!title) return alert('El título es obligatorio.');
-      popularSeries.push({
-        id: Date.now(),
-        title,
-        year: document.getElementById('newPopularYear').value.trim() || '2024',
-        description: document.getElementById('newPopularDesc').value.trim() || 'Serie popular.',
-        image: document.getElementById('newPopularImg').value.trim() || 'https://image.tmdb.org/t/p/w200/7dHw9sXfLhA5nKc7XqJmZq6nLQc.jpg',
-        trailer: document.getElementById('newPopularTrailer').value.trim() || '',
-        seasons: []
-      });
-      savePopularSeries();
-      renderPopular();
-      addPopularModal.classList.remove('active');
-      addNotification(`Serie popular "${title}" añadida`);
-    });
-
-    // Añadir película
     const addMovieModal = document.getElementById('addMovieModal');
-    const addMovieLink = document.getElementById('addMovieLink');
+    document.getElementById('addMovieLink').addEventListener('click', () => openAddModal(addMovieModal));
+    document.getElementById('addMovieLink2').addEventListener('click', () => openAddModal(addMovieModal));
     document.getElementById('cancelAddMovie').addEventListener('click', () => addMovieModal.classList.remove('active'));
     document.getElementById('confirmAddMovie').addEventListener('click', () => {
       const title = document.getElementById('newMovieTitle').value.trim();
@@ -843,29 +1002,22 @@
         year: document.getElementById('newMovieYear').value.trim() || '2024',
         description: document.getElementById('newMovieDesc').value.trim() || 'Película añadida.',
         image: document.getElementById('newMovieImg').value.trim() || 'https://image.tmdb.org/t/p/w200/7dHw9sXfLhA5nKc7XqJmZq6nLQc.jpg',
-        trailer: document.getElementById('newMovieTrailer').value.trim() || ''
+        trailer: document.getElementById('newMovieTrailer').value.trim() || '',
+        isNew: true,
+        addedToList: false
       });
       saveMovies();
-      renderMovies();
       addMovieModal.classList.remove('active');
-      addNotification(`Película "${title}" añadida`);
+      refreshCurrentView();
+      addNotification(`Película "${title}" creada`);
     });
 
-    // Abrir modales
     function openAddModal(modal) {
       modal.classList.add('active');
       modal.querySelectorAll('input').forEach(inp => inp.value = '');
     }
-    addSeriesLink.addEventListener('click', () => openAddModal(addSeriesModal));
-    addPopularLink.addEventListener('click', () => openAddModal(addPopularModal));
-    addMovieLink.addEventListener('click', () => openAddModal(addMovieModal));
+    document.getElementById('fabAddBtn').addEventListener('click', () => openAddModal(addSeriesModal));
 
-    // FAB
-    document.getElementById('fabAddBtn').addEventListener('click', () => {
-      openAddModal(addSeriesModal);
-    });
-
-    // Cerrar modales click fuera
     document.querySelectorAll('.add-modal').forEach(m => {
       m.addEventListener('click', (e) => { if (e.target === m) m.classList.remove('active'); });
     });
@@ -891,10 +1043,8 @@
     });
 
     // ====== INICIO ======
-    renderUserSeries();
-    renderPopular();
-    renderMovies();
-    setTimeout(() => addNotification('¡Bienvenido! Disfruta de series, películas y trailers.'), 1000);
+    navigateTo('inicio');
+    setTimeout(() => addNotification('¡Bienvenido a Luar TV! Explora todas las secciones.'), 1000);
   })();
 </script>
 </body>
